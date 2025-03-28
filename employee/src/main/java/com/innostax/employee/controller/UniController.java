@@ -1,50 +1,54 @@
 package com.innostax.employee.controller;
 
+import com.innostax.employee.dao.EmployeeDAO;
+import com.innostax.employee.dto.EmployeeDto;
+import com.innostax.employee.converter.EmployeeConverter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import com.innostax.employee.dao.EmployeeDAO;
 import com.innostax.employee.Entity.Employee;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
 @RequestMapping("/employee")
 public class UniController {
 
-    private final EmployeeDAO employeeDao;
+    private EmployeeDAO employeeDAO;
+    private EmployeeConverter employeeConverter;
 
-    public UniController(EmployeeDAO employeeDAO) {
-        this.employeeDao = employeeDAO;
+    @Autowired
+    public UniController(EmployeeDAO employeeDAO , EmployeeConverter employeeConverter) {
+        this.employeeDAO = employeeDAO;
+        this.employeeConverter = employeeConverter;
     }
 
-    @GetMapping("")
-    public List<Employee> getAll() {
-        return employeeDao.findAll();
+    @GetMapping("/")
+    public List<EmployeeDto> getAll() {
+        List<Employee> employees = employeeDAO.findAll();
+        return employeeConverter.entityListToDto(employees);
     }
 
     @GetMapping("/{id}")
-    public Employee getById(@PathVariable int id) {
-        return employeeDao.findById(id);
+    public EmployeeDto getById(@PathVariable int id) {
+        Employee employee = employeeDAO.findById(id);
+        return employeeConverter.entityToDto(employee);
     }
 
     @PostMapping("/add")
-    public Employee addNewEmployee(@RequestBody Employee newEmployee) {
-
-        employeeDao.save(newEmployee);
-        
-        return newEmployee;
+    public EmployeeDto save(@RequestBody EmployeeDto EmployeeDto) {
+        Employee employee = employeeConverter.DtoToEntity(EmployeeDto);
+        employee = employeeDAO.save(employee);
+        return employeeConverter.entityToDto(employee);
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteEmployee(@PathVariable int id ){
-        return employeeDao.deleteById(id);
+    public String delete(@PathVariable int id) {
+        return employeeDAO.deleteById(id);
     }
-    
 }
+
+

@@ -25,7 +25,8 @@ public class EmplDaoJpaImpl implements EmployeeDAO {
     @Override
     public List<Employee> findAll() {
         // Corrected the entity name case sensitivity in the query
-        TypedQuery<Employee> query = entityManager.createQuery("from Employee", Employee.class);
+        TypedQuery<Employee> query = entityManager.createQuery("from com.innostax.employee.Entity.Employee", Employee.class);
+
         return query.getResultList();
     }
 

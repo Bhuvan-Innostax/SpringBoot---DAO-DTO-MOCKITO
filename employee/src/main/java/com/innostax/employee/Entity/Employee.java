@@ -16,7 +16,6 @@ import lombok.Setter;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id; 
 
     @Column(name = "employee_name")
@@ -27,6 +26,7 @@ public class Employee {
 
     @Column(name = "drink_choice")
     public String drinkChoice;  
+
 
     // Default constructor
     public Employee() {}
