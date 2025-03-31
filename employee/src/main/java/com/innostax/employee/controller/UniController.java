@@ -4,7 +4,6 @@ import com.innostax.employee.dao.EmployeeDAO;
 import com.innostax.employee.dto.EmployeeDto;
 import com.innostax.employee.converter.EmployeeConverter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,10 +16,9 @@ import com.innostax.employee.Entity.Employee;
 @RequestMapping("/employee")
 public class UniController {
 
-    private EmployeeDAO employeeDAO;
-    private EmployeeConverter employeeConverter;
+    private final EmployeeDAO employeeDAO;
+    private final EmployeeConverter employeeConverter;
 
-    @Autowired
     public UniController(EmployeeDAO employeeDAO , EmployeeConverter employeeConverter) {
         this.employeeDAO = employeeDAO;
         this.employeeConverter = employeeConverter;
