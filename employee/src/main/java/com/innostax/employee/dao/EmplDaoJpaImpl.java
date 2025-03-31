@@ -2,7 +2,6 @@ package com.innostax.employee.dao;
 
 import com.innostax.employee.Entity.Employee;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
@@ -17,7 +16,7 @@ public class EmplDaoJpaImpl implements EmployeeDAO {
 
     private final EntityManager entityManager;
 
-    @Autowired
+    
     public EmplDaoJpaImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
