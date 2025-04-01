@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.web.client.RestTemplate;
 import static org.junit.jupiter.api.Assertions.*;
 import com.innostax.employee.config.EmployeeApplication;
 import com.innostax.employee.dao.EmployeeDAO;
@@ -16,23 +16,21 @@ import com.innostax.employee.dao.EmployeeDAO;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = EmployeeApplication.class)
 @ActiveProfiles("test")
-@Sql(scripts = "/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "/com/innostax/employee/config/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class EmployeeTest {
 
-    @LocalServerPort
-    private int port;
 
-    private String baseUrl;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private TestRestTemplate restTemplate;
 
     @Autowired
     private EmployeeDAO employeeDAO;
 
     @BeforeEach
     public void setUp() {
-        baseUrl = "http://localhost:" + port + "/employee";
+        restTemplate = new TestRestTemplate();
+
     }
 
     @Test
@@ -41,7 +39,7 @@ class EmployeeTest {
 
         // Ensure restTemplate is not null before making a request
         assertNotNull(restTemplate, "RestTemplate is not initialized");
-
+        String baseUrl = "http://localhost:" + String.valueOf(1) + "/employee";
         Employee response = restTemplate.postForObject(baseUrl, employee, Employee.class);
 
         assertNotNull(response, "Response should not be null");
@@ -50,11 +48,12 @@ class EmployeeTest {
     }
 
     @Test
-    @Sql(statements = "INSERT INTO employee (id, name, department, drink_choice) VALUES (4, 'Rahul', 'HR', 'TEA')",
+    @Sql(scripts = "/com/innostax/employee/config/insert.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "DELETE FROM employee WHERE name='Rahul'",
+    @Sql(scripts = "/com/innostax/employee/config/delete.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void testGetEmployees() {
+        String baseUrl = "http://localhost:" + String.valueOf(1) + "/employee";
         Employee[] employees = restTemplate.getForObject(baseUrl, Employee[].class);
 
         assertNotNull(employees, "Employees list should not be null");
